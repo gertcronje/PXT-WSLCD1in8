@@ -1,6 +1,7 @@
 {
     "LCD1IN8.LCD_Init|block": "LCD1IN8初期化",
     "LCD1IN8.LCD_Clear|block": "LCDクリア",
+    "LCD1IN8.LCD_Color|block": "色",
     "LCD1IN8.LCD_Filling|block": "LCDクリア %Color",
     "LCD1IN8.LCD_SetBL|block": "バックライトレベル %Lev",
     "LCD1IN8.LCD_ClearBuf|block": "描画キャッシュクリア",
