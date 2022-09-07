@@ -36,11 +36,11 @@ enum COLOR {
     BLACK = 0x0000,
     //% block=blue
     BLUE = 0x001F,
-    //% block=bred
+    //% block=purple
     BRED = 0XF81F,
-    //% block=gred
+    //% block=brown
     GRED = 0XFFE0,
-    //% block=gblue
+    //% block=blue green
     GBLUE = 0X07FF,
     //% block=red
     RED = 0xF800,
@@ -54,7 +54,7 @@ enum COLOR {
     YELLOW = 0xFFE0,
     //% block=brown
     BROWN = 0XBC40,
-    //% block=brred
+    //% block=dark brown
     BRRED = 0XFC07,
     //% block=gray
     GRAY = 0X8430
