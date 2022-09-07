@@ -2,7 +2,7 @@
 
 waveshare electronics
 
-![Waveshare_logo.png](Waveshare_logo.png.png)
+![Waveshare_logo.png](Waveshare_logo.png)
 
 ## License
 
