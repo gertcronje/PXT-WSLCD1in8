@@ -1544,14 +1544,15 @@ namespace LCD1IN8 {
 	
     //% blockId=LCD_Color
     //% blockGap=8
-    //% block="LCD Color"
+    //% block="Color %Color"
     export function LCD_Color(Color: COLOR): number{
 	return Color;
     }
 
     //% blockId=LCD_RGB
     //% blockGap=8
-    //% block="LCD RGB"
+    //% block="red %red|green %green|blue %blue"
+    //% red.min=0 red.max=31 green.min=0 green.max=63 blue.min=0 blue.max=31
     export function LCD_RGB(red: number, green:number, blue:number): number{
         return ((red & 0x1F) << 11) | ((green & 0x3F) << 5) | (blue & 0x1F);
     }
