@@ -1545,9 +1545,15 @@ namespace LCD1IN8 {
     //% blockId=LCD_Color
     //% blockGap=8
     //% block="LCD Color"
-    //% weight=195
     export function LCD_Color(Color: COLOR): number{
 	return Color;
+    }
+
+    //% blockId=LCD_RGB
+    //% blockGap=8
+    //% block="LCD RGB"
+    export function LCD_RGB(red: number, green:number, blue:number): number{
+        return ((red & 0x1F) << 11) | ((green & 0x3F) << 5) | (blue & 0x1F);
     }
 
     //% blockId=LCD_Filling
