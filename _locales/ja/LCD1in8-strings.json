@@ -1,3 +1,6 @@
 {
-    "LCD1IN8.LCD_Init|block": "LCD1IN8 初期化"
+    "LCD1IN8.LCD_Init|block": "LCD1IN8初期化",
+    "LCD1IN8.LCD_Clear|block": "LCDクリア",
+    "LCD1IN8.LCD_Filling|block": "%Color でLCDクリア"
+    
 }
