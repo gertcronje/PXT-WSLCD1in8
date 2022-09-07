@@ -30,19 +30,33 @@ let SRAM_PAGE_MODE = 0x80
 let SRAM_STREAM_MODE = 0x40
 
 enum COLOR {
+    //% block=white
     WHITE = 0xFFFF,
+    //% block=black
     BLACK = 0x0000,
+    //% block=blue
     BLUE = 0x001F,
+    //% block=bred
     BRED = 0XF81F,
+    //% block=gred
     GRED = 0XFFE0,
+    //% block=gblue
     GBLUE = 0X07FF,
+    //% block=red
     RED = 0xF800,
+    //% block=magenta
     MAGENTA = 0xF81F,
+    //% block=green
     GREEN = 0x07E0,
+    //% block=cyan
     CYAN = 0x7FFF,
+    //% block=yellow
     YELLOW = 0xFFE0,
+    //% block=brown
     BROWN = 0XBC40,
+    //% block=brred
     BRRED = 0XFC07,
+    //% block=gray
     GRAY = 0X8430
 }
 
@@ -54,12 +68,16 @@ enum DOT_PIXEL{
 };
 
 enum LINE_STYLE {
+    //% block=solid
     LINE_SOLID = 0,
+    //% block=dotted
     LINE_DOTTED,
 };
 
 enum DRAW_FILL {
+    //% block=empty
     DRAW_EMPTY = 0,
+    //% block=full
     DRAW_FULL,
 };
 
