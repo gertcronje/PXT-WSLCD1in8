@@ -1553,8 +1553,9 @@ namespace LCD1IN8 {
     //% blockGap=8
     //% block="red %red|green %green|blue %blue"
     //% red.min=0 red.max=31 green.min=0 green.max=63 blue.min=0 blue.max=31
+    //% red.min=0 red.max=255 green.min=0 green.max=255 blue.min=0 blue.max=255
     export function LCD_RGB(red: number, green:number, blue:number): number{
-        return ((red & 0x1F) << 11) | ((green & 0x3F) << 5) | (blue & 0x1F);
+        return (((red >> 3) & 0x1F) << 11) | (((green >> 2) & 0x3F) << 5) | ((blue >> 3) & 0x1F);
     }
 
     //% blockId=LCD_Filling
