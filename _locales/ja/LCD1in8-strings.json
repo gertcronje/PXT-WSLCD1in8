@@ -7,6 +7,7 @@
     "LCD1IN8.LCD_SetBL|block": "バックライトレベル %Lev",
     "LCD1IN8.LCD_ClearBuf|block": "描画キャッシュクリア",
     "LCD1IN8.LCD_Display|block": "全画面描画",
+    "LCD1IN8.LCD_Flip|block": "上下反転",
     "LCD1IN8.DrawPoint|block": "点を描く|x %Xpoint|y %Ypoint|色 %Color|大きさ %Dot_Pixel",
     "LCD1IN8.DrawLine|block": "線を引く|開始X %Xstart|開始Y %Ystart|終了X %Xend|終了Y %Yend|色 %Color|線の太さ %Line_width|線の種類 %Line_Style",
     "LCD1IN8.DrawRectangle|block": "四角形を描く|開始X %Xstart2|開始Y %Ystart2|終了X %Xend2|終了Y %Yend2|色 %Color|塗りつぶし %Filled|線の太さ %Dot_Pixel",
