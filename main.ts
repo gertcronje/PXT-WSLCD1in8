@@ -1567,15 +1567,26 @@ namespace LCD1IN8 {
         LCD_SetColor(Color, LCD_WIDTH + 2, LCD_HEIGHT + 2);
     }
 	
-	//% blockId=LCD_SetBL
+    //% blockId=LCD_SetBL
     //% blockGap=8
     //% block="Set back light level %Lev"
-	//% Lev.min=0 Lev.max=1023
+    //% Lev.min=0 Lev.max=1023
     //% weight=180
     export function LCD_SetBL(Lev: number): void{
         pins.analogWritePin(AnalogPin.P1, 1023)
     }
-
+	
+    //% blockId=LCD_Flip
+    //% blockGap=8
+    //% block="Flip Screen"
+    export function LCD_Flip(flip: boolean): void{
+        LCD_WriteReg(0x36); //MX, MY, RGB mode
+	// original MX+MV
+	// flip  MV+MY
+        LCD_WriteData_8Bit(0xF7 & ( filp ? 0x60 : 0xA0 )); //RGB color filter panel
+    }
+	
+	
     function LCD_WriteReg(reg: number): void {
         pins.digitalWritePin(DigitalPin.P12, 0);
         pins.digitalWritePin(DigitalPin.P16, 0);
