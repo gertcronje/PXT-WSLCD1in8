@@ -5,7 +5,7 @@
     "LCD1IN8.LCD_RGB|block": "赤 %red|緑 %green|青 %blue",
     "LCD1IN8.LCD_Filling|block": "LCDクリア %Color",
     "LCD1IN8.LCD_SetBL|block": "バックライトレベル %Lev",
-    "LCD1IN8.LCD_ClearBuf|block": "描画キャッシュクリア",
+    "LCD1IN8.LCD_ClearBuf|block": "描画キャッシュクリア %Color",
     "LCD1IN8.LCD_Display|block": "全画面描画",
     "LCD1IN8.LCD_Flip|block": "上下反転",
     "LCD1IN8.DrawPoint|block": "点を描く|x %Xpoint|y %Ypoint|色 %Color|大きさ %Dot_Pixel",
