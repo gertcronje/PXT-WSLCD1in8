@@ -1583,7 +1583,7 @@ namespace LCD1IN8 {
         LCD_WriteReg(0x36); //MX, MY, RGB mode
 	// original MX+MV
 	// flip  MV+MY
-        LCD_WriteData_8Bit(0xF7 & ( filp ? 0x60 : 0xA0 )); //RGB color filter panel
+        LCD_WriteData_8Bit(0xF7 & ( flip ? 0x60 : 0xA0 )); //RGB color filter panel
     }
 	
 	
