@@ -1586,8 +1586,7 @@ namespace LCD1IN8 {
 	// flip  MV+MY
         LCD_WriteData_8Bit(0xF7 & ( ( flip != 0 ) ? 0x60 : 0xA0 )); //RGB color filter panel
     }
-	
-	
+
     function LCD_WriteReg(reg: number): void {
         pins.digitalWritePin(DigitalPin.P12, 0);
         pins.digitalWritePin(DigitalPin.P16, 0);
@@ -1631,7 +1630,7 @@ namespace LCD1IN8 {
         LCD_WriteReg(0x2C);
     }
 
-    function LCD_SetColor(Color:number, Xpoint: number, Ypoint: number, ): void {
+    function LCD_SetColor(Color:number, Xpoint: number, Ypoint: number): void {
         LCD_WriteData_Buf(Color, Xpoint*Ypoint);
     }
 
@@ -1639,6 +1638,12 @@ namespace LCD1IN8 {
         let Addr = (Xpoint + Ypoint * 160)* 2;
         SPIRAM_WR_Byte(Addr, Color >> 8);
         SPIRAM_WR_Byte(Addr + 1, Color & 0xff);
+    }
+
+    function LCD_DirectSetPoint(Xpoint: number, Ypoint: number, Color: number): void {
+        LCD_SetWindows(Xpoint, Ypoint, Xpoint + 1, Ypoint + 1);
+        LCD_WriteData_8Bit(Color >> 8);
+        LCD_WriteData_8Bit(Color & 0xFF);
     }
     
     //% blockId=Draw_Clear
@@ -1713,6 +1718,22 @@ namespace LCD1IN8 {
         }
     }
 
+    //% blockId=DirectDrawPoint
+    //% blockGap=8
+    //% block="DirectDraw Point|x %Xpoint|y %Ypoint|Color %Color|Point Size %Dot_Pixel"
+    //% Xpoint.min=1 Xpoint.max=160 Ypoint.min=1 Ypoint.max=128
+    //% Color.min=0 Color.max=65535
+    export function DirectDrawPoint(Xpoint:number, Ypoint:number, Color:number, Dot_Pixel:DOT_PIXEL): void {
+        let XDir_Num ,YDir_Num;
+        for(XDir_Num = 0; XDir_Num < Dot_Pixel; XDir_Num++) {
+            for(YDir_Num = 0; YDir_Num < Dot_Pixel; YDir_Num++) {
+                LCD_SetPoint(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
+                LCD_DirectSetPoint(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
+            }
+        }
+    }
+
+
 	//% blockId=DrawLine
 	//% blockGap=8
 	//% block="Draw Line|Xstart %Xstart|Ystart %Ystart|Xend %Xend|Yend %Yend|Color %Color|width %Line_width|Style %Line_Style"
@@ -1761,6 +1782,53 @@ namespace LCD1IN8 {
         }
     }
     
+	//% blockId=DirectDrawLine
+	//% blockGap=8
+	//% block="Direct Draw Line|Xstart %Xstart|Ystart %Ystart|Xend %Xend|Yend %Yend|Color %Color|width %Line_width|Style %Line_Style"
+	//% Xstart.min=1 Xstart.max=160 Ystart.min=1 Ystart.max=128
+	//% Xend.min=1 Xend.max=160 Yend.min=1 Yend.max=128
+	//% Color.min=0 Color.max=65535
+    export function DirectDrawLine(Xstart: number, Ystart: number, Xend: number, Yend: number, Color: number, Line_width: DOT_PIXEL, Line_Style: LINE_STYLE): void {
+        if (Xstart > Xend)
+            Swop_AB(Xstart, Xend);
+        if (Ystart > Yend)
+            Swop_AB(Ystart, Yend);
+
+        let Xpoint = Xstart;
+        let Ypoint = Ystart;
+        let dx = Xend - Xstart >= 0 ? Xend - Xstart : Xstart - Xend;
+        let dy = Yend - Ystart <= 0 ? Yend - Ystart : Ystart - Yend;
+
+        // Increment direction, 1 is positive, -1 is counter;
+        let XAddway = Xstart < Xend ? 1 : -1;
+        let YAddway = Ystart < Yend ? 1 : -1;
+
+        //Cumulative error
+        let Esp = dx + dy;
+        let Line_Style_Temp = 0;
+
+        for (; ;) {
+            Line_Style_Temp++;
+            //Painted dotted line, 2 point is really virtual
+            if (Line_Style == LINE_STYLE.LINE_DOTTED && Line_Style_Temp % 3 == 0) {
+                DirectDrawPoint(Xpoint, Ypoint, GUI_BACKGROUND_COLOR, Line_width);
+                Line_Style_Temp = 0;
+            } else {
+                DirectDrawPoint(Xpoint, Ypoint, Color, Line_width);
+            }
+            if (2 * Esp >= dy) {
+                if (Xpoint == Xend) break;
+                Esp += dy
+                Xpoint += XAddway;
+            }
+            if (2 * Esp <= dx) {
+                if (Ypoint == Yend) break;
+                Esp += dx;
+                Ypoint += YAddway;
+            }
+        }
+    }
+
     //% blockId=DrawRectangle
     //% blockGap=8
     //% block="Draw Rectangle|Xstart2 %Xstart2|Ystart2 %Ystart2|Xend2 %Xend2|Yend2 %Yend2|Color %Color|Filled %Filled |Line width %Dot_Pixel"
@@ -1784,6 +1852,31 @@ namespace LCD1IN8 {
             DrawLine(Xstart2, Ystart2, Xstart2, Yend2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
             DrawLine(Xend2, Yend2, Xend2, Ystart2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
             DrawLine(Xend2, Yend2, Xstart2, Yend2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
+        }
+    }
+
+    //% blockId=DirectDrawRectangle
+    //% blockGap=8
+    //% block="Direct Draw Rectangle|Xstart2 %Xstart2|Ystart2 %Ystart2|Xend2 %Xend2|Yend2 %Yend2|Color %Color|Filled %Filled |Line width %Dot_Pixel"
+    //% Xstart2.min=1 Xstart2.max=160 Ystart2.min=1 Ystart2.max=128 
+    //% Xend2.min=1 Xend2.max=160 Yend2.min=1 Yend2.max=128
+    //% Color.min=0 Color.max=65535
+    export function DirectDrawRectangle(Xstart2: number, Ystart2: number, Xend2: number, Yend2: number, Color: number, Filled: DRAW_FILL, Dot_Pixel: DOT_PIXEL): void {
+        if (Xstart2 > Xend2)
+            Swop_AB(Xstart2, Xend2);
+        if (Ystart2 > Yend2)
+            Swop_AB(Ystart2, Yend2);
+
+        let Ypoint = 0;
+        if (Filled) {
+			for(Ypoint = Ystart2; Ypoint < Yend2; Ypoint++) {
+				DirectDrawLine(Xstart2, Ypoint, Xend2, Ypoint, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
+			}
+        } else {
+            DirectDrawLine(Xstart2, Ystart2, Xend2, Ystart2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
+            DirectDrawLine(Xstart2, Ystart2, Xstart2, Yend2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
+            DirectDrawLine(Xend2, Yend2, Xend2, Ystart2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
+            DirectDrawLine(Xend2, Yend2, Xstart2, Yend2, Color, Dot_Pixel, LINE_STYLE.LINE_SOLID);
         }
     }
 
@@ -1833,6 +1926,63 @@ namespace LCD1IN8 {
                 DrawPoint(X_Center + XCurrent, Y_Center - YCurrent, Color, Dot_Pixel);             //6
                 DrawPoint(X_Center + YCurrent, Y_Center - XCurrent, Color, Dot_Pixel);             //7
                 DrawPoint(X_Center + YCurrent, Y_Center + XCurrent, Color, Dot_Pixel);             //0
+
+                if (Esp < 0)
+                    Esp += 4 * XCurrent + 6;
+                else {
+                    Esp += 10 + 4 * (XCurrent - YCurrent);
+                    YCurrent--;
+                }
+                XCurrent++;
+            }
+        }
+    }
+    
+    //% blockId=DirectDrawCircle
+    //% blockGap=8
+    //% block="Direct Draw Circle|X_Center %X_Center|Y_Center %Y_Center|Radius %Radius|Color %Color|Filled %Draw_Fill|Line width %Dot_Pixel"
+	//% X_Center.min=1 X_Center.max=160 Y_Center.min=1 Y_Center.max=128
+	//% Radius.min=0 Radius.max=160
+    //% Color.min=0 Color.max=65535
+    export function DirectDrawCircle(X_Center: number, Y_Center: number, Radius: number, Color: number, Draw_Fill: DRAW_FILL, Dot_Pixel: DOT_PIXEL): void {
+        //Draw a circle from(0, R) as a starting point
+        let XCurrent = 0;
+        let YCurrent = Radius;
+
+        //Cumulative error,judge the next point of the logo
+        let Esp = 3 - (Radius << 1);
+
+        let sCountY = 0;
+        if (Draw_Fill == DRAW_FILL.DRAW_FULL) {//DrawPoint(Xpoint, Ypoint, GUI_BACKGROUND_COLOR, Line_width);
+            while (XCurrent <= YCurrent) { //Realistic circles
+                for (sCountY = XCurrent; sCountY <= YCurrent; sCountY++) {
+                    DirectDrawPoint(X_Center + XCurrent, Y_Center + sCountY, Color, DOT_PIXEL.DOT_PIXEL_1);             //1
+                    DirectDrawPoint(X_Center - XCurrent, Y_Center + sCountY, Color, DOT_PIXEL.DOT_PIXEL_1);             //2
+                    DirectDrawPoint(X_Center - sCountY, Y_Center + XCurrent, Color, DOT_PIXEL.DOT_PIXEL_1);             //3
+                    DirectDrawPoint(X_Center - sCountY, Y_Center - XCurrent, Color, DOT_PIXEL.DOT_PIXEL_1);             //4
+                    DirectDrawPoint(X_Center - XCurrent, Y_Center - sCountY, Color, DOT_PIXEL.DOT_PIXEL_1);             //5
+                    DirectDrawPoint(X_Center + XCurrent, Y_Center - sCountY, Color, DOT_PIXEL.DOT_PIXEL_1);             //6
+                    DirectDrawPoint(X_Center + sCountY, Y_Center - XCurrent, Color, DOT_PIXEL.DOT_PIXEL_1);             //7
+                    DirectDrawPoint(X_Center + sCountY, Y_Center + XCurrent, Color, DOT_PIXEL.DOT_PIXEL_1);
+                }
+                if (Esp < 0)
+                    Esp += 4 * XCurrent + 6;
+                else {
+                    Esp += 10 + 4 * (XCurrent - YCurrent);
+                    YCurrent--;
+                }
+                XCurrent++;
+            }
+        } else { //Draw a hollow circle
+            while (XCurrent <= YCurrent) {
+                DirectDrawPoint(X_Center + XCurrent, Y_Center + YCurrent, Color, Dot_Pixel);             //1
+                DirectDrawPoint(X_Center - XCurrent, Y_Center + YCurrent, Color, Dot_Pixel);             //2
+                DirectDrawPoint(X_Center - YCurrent, Y_Center + XCurrent, Color, Dot_Pixel);             //3
+                DirectDrawPoint(X_Center - YCurrent, Y_Center - XCurrent, Color, Dot_Pixel);             //4
+                DirectDrawPoint(X_Center - XCurrent, Y_Center - YCurrent, Color, Dot_Pixel);             //5
+                DirectDrawPoint(X_Center + XCurrent, Y_Center - YCurrent, Color, Dot_Pixel);             //6
+                DirectDrawPoint(X_Center + YCurrent, Y_Center - XCurrent, Color, Dot_Pixel);             //7
+                DirectDrawPoint(X_Center + YCurrent, Y_Center + XCurrent, Color, Dot_Pixel);             //0
 
                 if (Esp < 0)
                     Esp += 4 * XCurrent + 6;
