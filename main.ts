@@ -1552,7 +1552,6 @@ namespace LCD1IN8 {
     //% blockId=LCD_RGB
     //% blockGap=8
     //% block="red %red|green %green|blue %blue"
-    //% red.min=0 red.max=31 green.min=0 green.max=63 blue.min=0 blue.max=31
     //% red.min=0 red.max=255 green.min=0 green.max=255 blue.min=0 blue.max=255
     export function LCD_RGB(red: number, green:number, blue:number): number{
         return (((red >> 3) & 0x1F) << 11) | (((green >> 2) & 0x3F) << 5) | ((blue >> 3) & 0x1F);
@@ -1579,11 +1578,12 @@ namespace LCD1IN8 {
     //% blockId=LCD_Flip
     //% blockGap=8
     //% block="Flip Screen %flip"
-    export function LCD_Flip(flip: boolean): void{
+    //% flip.min=0 flip.max=1
+    export function LCD_Flip(flip: number): void{
         LCD_WriteReg(0x36); //MX, MY, RGB mode
 	// original MX+MV
 	// flip  MV+MY
-        LCD_WriteData_8Bit(0xF7 & ( flip ? 0x60 : 0xA0 )); //RGB color filter panel
+        LCD_WriteData_8Bit(0xF7 & ( ( flip != 0 ) ? 0x60 : 0xA0 )); //RGB color filter panel
     }
 	
 	
