@@ -2028,6 +2028,41 @@ namespace LCD1IN8 {
 			Xpoint += Font_Width;
 		} 
     }
+	
+    //% blockId=DirectDisString
+    //% blockGap=8
+    //% block="Direct Show String|X %Xchar|Y %Ychar|char %ch|Color %Color"
+    //% Xchar.min=1 Xchar.max=160 Ychar.min=1 Ychar.max=128 
+    //% Color.min=0 Color.max=65535
+    //% weight=100
+    export function DirectDisString(Xchar: number, Ychar: number, ch: string, Color: number): void{
+		let Xpoint = Xchar;
+		let Ypoint = Ychar;
+        let Font_Height = 12;
+        let Font_Width = 7;
+		let ch_len = ch.length;
+		let i = 0;
+		for(i = 0; i < ch_len; i++){
+			let ch_asicc =  ch.charCodeAt(i) - 32;//NULL = 32
+			let Char_Offset = ch_asicc * 12;
+			
+			if((Xpoint + Font_Width) > 160) {
+				Xpoint = Xchar;
+				Ypoint += Font_Height;
+			}
+
+			// If the Y direction is full, reposition to(Xstart, Ystart)
+			if((Ypoint  + Font_Height) > 128) {
+				Xpoint = Xchar;
+				Ypoint = Ychar;
+			}
+			DirectDisChar_1207(Xpoint, Ypoint, Char_Offset, Color);
+			
+			//The next word of the abscissa increases the font of the broadband
+			Xpoint += Font_Width;
+		} 
+    }
+    
     
     //% blockId=DisNumber
     //% blockGap=8
@@ -2041,6 +2076,18 @@ namespace LCD1IN8 {
         DisString(Xnum, Ynum, num + "", Color);
     }
 
+    //% blockId=DirectDisNumber
+    //% blockGap=8
+    //% block="Direct Show number|X %Xnum|Y %Ynum|number %num|Color %Color"
+    //% Xnum.min=1 Xnum.max=160 Ynum.min=1 Ynum.max=128 
+    //% Color.min=0 Color.max=65535
+    //% weight=100
+    export function DirectDisNumber(Xnum: number, Ynum: number, num: number, Color: number): void{
+		let Xpoint = Xnum;
+		let Ypoint = Ynum;
+        DirectDisString(Xnum, Ynum, num + "", Color);
+    }
+
     function DisChar_1207(Xchar:number, Ychar:number, Char_Offset:number, Color:number): void {
         let Page = 0, Column = 0;
         let off = Char_Offset
@@ -2049,6 +2096,24 @@ namespace LCD1IN8 {
                 if(Font12_Table[off] & (0x80 >> (Column % 8)))
                     LCD_SetPoint(Xchar + Column, Ychar + Page, Color);
 
+                //One pixel is 8 bits
+                if(Column % 8 == 7)
+                    off++;
+            }// Write a line
+            if(7 % 8 != 0)
+                off++;
+        }// Write all
+    }
+
+    function DirectDisChar_1207(Xchar:number, Ychar:number, Char_Offset:number, Color:number): void {
+        let Page = 0, Column = 0;
+        let off = Char_Offset
+        for(Page = 0; Page < 12; Page ++ ) {
+            for(Column = 0; Column < 7; Column ++ ) {
+                if(Font12_Table[off] & (0x80 >> (Column % 8))){
+                    LCD_SetPoint(Xchar + Column, Ychar + Page, Color);
+                    LCD_DirectSetPoint(Xchar + Column, Ychar + Page, Color);
+		}
                 //One pixel is 8 bits
                 if(Column % 8 == 7)
                     off++;
