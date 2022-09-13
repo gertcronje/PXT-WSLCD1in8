@@ -1417,7 +1417,8 @@ let Font12_Table:number[] =
 
 pins.spiPins(DigitalPin.P15, DigitalPin.P14, DigitalPin.P13)
 pins.spiFormat(8, 0)
-pins.spiFrequency(18000000)
+//pins.spiFrequency(18000000)
+pins.spiFrequency(80000000)
 
 //% weight=20 color=#436EEE icon="\uf108"
 namespace LCD1IN8 {
