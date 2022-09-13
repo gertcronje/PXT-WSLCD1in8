@@ -1562,7 +1562,7 @@ namespace LCD1IN8 {
     //% blockGap=8
     //% block="Filling Color %Color"
     //% weight=195
-    export function LCD_Filling(Color: COLOR): void{
+    export function LCD_Filling(Color: number): void{
         LCD_SetWindows(0, 0, LCD_WIDTH, LCD_HEIGHT);
         LCD_SetColor(Color, LCD_WIDTH + 2, LCD_HEIGHT + 2);
     }
@@ -1642,10 +1642,12 @@ namespace LCD1IN8 {
     
     //% blockId=Draw_Clear
     //% blockGap=8
-    //% block="Clear Drawing cache"
+    //% block="Clear Drawing cache %Color"
     //% weight=195
-    export function LCD_ClearBuf(): void {
+    export function LCD_ClearBuf(Color:number=0xFFFF): void {
         let i;
+	let b1 = ( Color >> 8 ) & 0xFF;
+	let b2 = ( Color & 0xFF );
         SPIRAM_Set_Mode(SRAM_STREAM_MODE);
         pins.digitalWritePin(DigitalPin.P2, 0);
         pins.spiWrite(SRAM_CMD_WRITE);
@@ -1654,7 +1656,7 @@ namespace LCD1IN8 {
         pins.spiWrite(0);
 
         for (i = 0; i < 160 * 2 * 128; i++) {
-            pins.spiWrite(0xff);
+            pins.spiWrite( ( i & 1 ) == 0 ? b1 : b2 );
         }
         pins.digitalWritePin(DigitalPin.P2, 1);
     }
