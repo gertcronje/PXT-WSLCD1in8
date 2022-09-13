@@ -1578,7 +1578,7 @@ namespace LCD1IN8 {
 	
     //% blockId=LCD_Flip
     //% blockGap=8
-    //% block="Flip Screen"
+    //% block="Flip Screen %flip"
     export function LCD_Flip(flip: boolean): void{
         LCD_WriteReg(0x36); //MX, MY, RGB mode
 	// original MX+MV
