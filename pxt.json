@@ -1,6 +1,6 @@
 {
     "name": "LCD1in8",
-    "version": "2.0.33",
+    "version": "2.0.34",
     "description": "waveshare electronics",
     "dependencies": {
         "core": "*",
