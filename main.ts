@@ -355,7 +355,7 @@ namespace LCD1IN8 {
 	    let addr = ( LCD_WIDTH * y + Xstart ) * 2;
             pins.spiWrite(addr>>8);
             pins.spiWrite(addr&0xff);
-            for(let x = 0; offset<w; offset++){
+            for(let offset = 0; offset<w; offset++){
                 rbuf[offset] = pins.spiWrite(0x00);
             }
             pins.digitalWritePin(DigitalPin.P2, 1);
