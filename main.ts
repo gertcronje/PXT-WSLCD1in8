@@ -334,7 +334,41 @@ namespace LCD1IN8 {
         }
         pins.digitalWritePin(DigitalPin.P2, 1);
     }
-    
+
+    //% blockId=LCD_DisplayWindows
+    //% blockGap=8
+    //% block="Show Windows display data |Xstart %Xstart|Ystart %Ystart|Xend %Xend|Yend %Yend "
+    //% Xstart.min=1 Xstart.max=160 Ystart.min=1 Ystart.max=128
+    //% Xend.min=1 Xend.max=160 Yend.min=1 Yend.max=128
+    export function LCD_DisplayWindows(Xstart: number, Ystart: number, Xend: number, Yend: number): void {
+        let rbuf = [];
+        for (let i=0; i<(Xend - Xstart + 1) * 2; i++) {
+            rbuf[i] = 0;
+        }
+        SPIRAM_Set_Mode(SRAM_STREAM_MODE);
+        LCD_SetWindows(Xstart, Ystart, Xend, Yend);
+	let w = Xend - Xstart;
+	for( let y = Ystart; y < Yend; y++ ){
+            pins.digitalWritePin(DigitalPin.P2, 0);
+            pins.spiWrite(SRAM_CMD_READ);
+            pins.spiWrite(0);
+	    let addr = ( LCD_WIDTH * y + Xstart ) * 2;
+            pins.spiWrite(addr>>8);
+            pins.spiWrite(addr&0xff);
+            for(let x = 0; offset<w; offset++){
+                rbuf[offset] = pins.spiWrite(0x00);
+            }
+            pins.digitalWritePin(DigitalPin.P2, 1);
+
+            pins.digitalWritePin(DigitalPin.P12, 1);
+            pins.digitalWritePin(DigitalPin.P16, 0);
+            for (let offset = 0; offset < w; offset++) {
+                pins.spiWrite(rbuf[offset]);
+            }
+            pins.digitalWritePin(DigitalPin.P16, 1);   
+	}
+    }
+	
     //% blockId=LCD_Display
     //% blockGap=8
     //% block="Show Full Screen"
