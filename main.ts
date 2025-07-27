@@ -85,8 +85,8 @@ const Font12_Table = hex`000000000000000000000000001010101010000010000000006C484
 
 pins.spiPins(DigitalPin.P15, DigitalPin.P14, DigitalPin.P13)
 pins.spiFormat(8, 0)
-//pins.spiFrequency(18000000)
-pins.spiFrequency(80000000)
+pins.spiFrequency(8000000)
+//pins.spiFrequency(80000000)
 
 //% weight=20 color=#436EEE icon="\uf108"
 namespace LCD1IN8 {
